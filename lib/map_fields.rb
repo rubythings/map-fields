@@ -10,6 +10,7 @@ module MapFields
   def map_fields
     default_options = {
       :file_field => 'file',
+      :separator => ",",
       :params => []
     }
     options = default_options.merge(
@@ -52,7 +53,7 @@ module MapFields
     unless @map_fields_error
       @rows = []
       begin
-        FasterCSV.foreach(session[:map_fields][:file]) do |row|
+        FasterCSV.foreach(session[:map_fields][:file], :col_sep => options[:separator]) do |row|
           @rows << row
           break if @rows.size == 10
         end
@@ -135,7 +136,7 @@ module MapFields
 
     def each
       row_number = 1
-      FasterCSV.foreach(@file) do |csv_row|
+      FasterCSV.foreach(@file, :col_sep => options[:separator]) do |csv_row|
         unless row_number == 1 && @ignore_first_row
           row = {}
           @mapping.each do |k,v|
