@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 module MapFields
   VERSION = '1.0.0'
 
@@ -53,7 +51,7 @@ module MapFields
     unless @map_fields_error
       @rows = []
       begin
-        FasterCSV.foreach(session[:map_fields][:file], :col_sep => options[:separator]) do |row|
+        CSV.foreach(session[:map_fields][:file], :col_sep => options[:separator]) do |row|
           @rows << row
           break if @rows.size == 10
         end
@@ -196,7 +194,5 @@ end
 
 if defined?(Rails) and defined?(ActionController)
   ActionController::Base.send(:include, MapFields)
-  ActionController::Base.view_paths.push File.expand_path(File.join(File.dirname(__FILE__), '..', 'views'))
-  #This is a hack but the above code is not enough when using bundler and Rails 2.3.5
-  ActionController::Base.view_paths.push "app/views"
+  ActionController::Base.prepend_view_path File.expand_path(File.join(File.dirname(__FILE__), '..', 'views'))
 end
